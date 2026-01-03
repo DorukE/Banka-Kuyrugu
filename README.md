@@ -1,0 +1,2 @@
+# Banka Kuyrugu
+Veri Yapıları
