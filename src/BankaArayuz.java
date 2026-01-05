@@ -1,39 +1,115 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Ad Soyad: Doruk Evcimik - 240053028
+ * Bölüm: Bilgisayar Programcılığı
+ * Proje: Profesyonel Banka Sıramatik Paneli (Yeşil-Beyaz Tema)
+ */
 public class BankaArayuz extends JFrame {
     private BankaKuyrugu banka = new BankaKuyrugu();
     private int siraSayaci = 1;
 
-    // Görsel bileşenler
-    private JTextField isimAlani = new JTextField(15);
-    private JTextArea listeAlani = new JTextArea(10, 20);
-    private JLabel durumEtiketi = new JLabel("Hoşgeldiniz! Lütfen sıra alınız.");
+    // --- RENK VE FONT PALETİ ---
+    Color anaYesil = new Color(34, 139, 34); // Forest Green
+    Color acikYesil = new Color(240, 255, 240); // Honeydew (Arka plan için)
+    Color beyaz = Color.WHITE;
+    Font baslikFont = new Font("Segoe UI", Font.BOLD, 24);
+    Font altBaslikFont = new Font("Segoe UI", Font.BOLD, 16);
+    Font metinFont = new Font("Segoe UI", Font.PLAIN, 14);
+
+    private JTextField isimAlani = new JTextField();
+    private JTextArea listeAlani = new JTextArea();
+    private JLabel bekleyenSayisiLabel = new JLabel("Bekleyen Sayısı: 0");
+    private JLabel ilkUcLabel = new JLabel("<html><b>Sırası Yaklaşanlar:</b> - </html>");
 
     public BankaArayuz() {
-        setTitle("Banka Sıra Takip Sistemi");
-        setSize(400, 400);
+        // --- ANA PENCERE AYARLARI ---
+        setTitle("ALANYA BANK | Sıramatik Sistemi");
+        setSize(500, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new FlowLayout());
+        setLocationRelativeTo(null);
+        getContentPane().setBackground(acikYesil);
+        setLayout(new BorderLayout(15, 15));
 
-        // Arayüz elemanlarını ekleyelim
-        add(new JLabel("Müşteri Adı:"));
-        add(isimAlani);
+        // --- ÜST PANEL (Header) ---
+        JPanel ustPanel = new JPanel(new GridLayout(2, 1));
+        ustPanel.setBackground(anaYesil);
+        ustPanel.setPreferredSize(new Dimension(500, 100));
 
-        JButton btnSiraAl = new JButton("Sıra Al");
-        JButton btnCagir = new JButton("Sıradakini Çağır");
-        add(btnSiraAl);
-        add(btnCagir);
+        JLabel baslik = new JLabel("ALANYA BANK", SwingConstants.CENTER);
+        baslik.setFont(baslikFont);
+        baslik.setForeground(beyaz);
+        ustPanel.add(baslik);
 
+        bekleyenSayisiLabel.setFont(altBaslikFont);
+        bekleyenSayisiLabel.setForeground(beyaz);
+        bekleyenSayisiLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        ustPanel.add(bekleyenSayisiLabel);
+        add(ustPanel, BorderLayout.NORTH);
+
+        // --- ORTA PANEL (İşlemler ve Liste) ---
+        JPanel ortaPanel = new JPanel(new BorderLayout(15, 15));
+        ortaPanel.setOpaque(false);
+        ortaPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+
+        // Giriş ve Butonlar
+        JPanel girisPaneli = new JPanel(new GridLayout(4, 1, 8, 8));
+        girisPaneli.setOpaque(false);
+
+        JLabel label = new JLabel("Müşteri Adı Soyadı:");
+        label.setFont(metinFont);
+        girisPaneli.add(label);
+
+        isimAlani.setFont(new Font("Arial", Font.BOLD, 16));
+        isimAlani.setBorder(new LineBorder(anaYesil, 2));
+        girisPaneli.add(isimAlani);
+
+        // İkonlu Butonlar
+        JButton btnSiraAl = new JButton("➕ SIRA AL");
+        btnSiraAl.setBackground(anaYesil);
+        btnSiraAl.setForeground(beyaz);
+        btnSiraAl.setFont(altBaslikFont);
+        btnSiraAl.setFocusPainted(false);
+
+        JButton btnCagir = new JButton("🔔 SIRADAKİNİ ÇAĞIR");
+        btnCagir.setBackground(beyaz);
+        btnCagir.setForeground(anaYesil);
+        btnCagir.setFont(altBaslikFont);
+        btnCagir.setBorder(new LineBorder(anaYesil, 2));
+        btnCagir.setFocusPainted(false);
+
+        girisPaneli.add(btnSiraAl);
+        girisPaneli.add(btnCagir);
+        ortaPanel.add(girisPaneli, BorderLayout.NORTH);
+
+        // Liste Alanı
+        listeAlani.setFont(new Font("Consolas", Font.PLAIN, 15));
         listeAlani.setEditable(false);
-        add(new JScrollPane(listeAlani));
-        add(durumEtiketi);
+        listeAlani.setBorder(new LineBorder(anaYesil, 1));
+        JScrollPane scroll = new JScrollPane(listeAlani);
+        ortaPanel.add(scroll, BorderLayout.CENTER);
 
-        // BUTON İŞLEMLERİ
+        // Sırası Yaklaşanlar (Alt Bilgi)
+        ilkUcLabel.setOpaque(true);
+        ilkUcLabel.setBackground(beyaz);
+        ilkUcLabel.setForeground(anaYesil);
+        ilkUcLabel.setFont(metinFont);
+        ilkUcLabel.setBorder(new LineBorder(anaYesil, 1));
+        ilkUcLabel.setPreferredSize(new Dimension(0, 50));
+        ortaPanel.add(ilkUcLabel, BorderLayout.SOUTH);
+
+        add(ortaPanel, BorderLayout.CENTER);
+
+        // --- BUTON FONKSİYONLARI ---
         btnSiraAl.addActionListener(e -> {
-            String isim = isimAlani.getText();
-            if (!isim.isEmpty()) {
-                banka.siraAl(new Musteri(isim, siraSayaci++));
+            String ad = isimAlani.getText().trim();
+            if (!ad.isEmpty()) {
+                banka.siraAl(new Musteri(ad, siraSayaci++));
                 guncelle();
                 isimAlani.setText("");
             }
@@ -41,26 +117,37 @@ public class BankaArayuz extends JFrame {
 
         btnCagir.addActionListener(e -> {
             Musteri cagirilan = banka.musteriyiCagir();
+            guncelle();
             if (cagirilan != null) {
-                durumEtiketi.setText("Şu an gişede: " + cagirilan.ad);
-                guncelle();
-            } else {
-                durumEtiketi.setText("Bekleyen kimse yok!");
+                JOptionPane.showMessageDialog(this,
+                        "Sıradaki Müşteri Gişeye Bekleniyor:\n" + cagirilan.ad,
+                        "GİŞE ÇAĞRISI", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
 
     private void guncelle() {
-        // Listeyi her işlemde yeniler
-        StringBuilder sb = new StringBuilder("--- Bekleyenler ---\n");
-        // Not: BankaKuyrugu sınıfına sirayiGetir metodunu eklememiz gerekecek
-        // Şimdilik basitçe burayı konsoldan kopyaladığın mantıkla doldurabilirsin
-        listeAlani.setText("Sıra güncellendi (Konsolu kontrol et)");
+        List<Musteri> kuyruk = new ArrayList<>(banka.getTumKuyruk());
+        bekleyenSayisiLabel.setText("Bekleyen Müşteri Sayısı: " + kuyruk.size());
+
+        // Sırası Yaklaşanlar (İlk 3 Kişi)
+        StringBuilder ilkUc = new StringBuilder("<html>&nbsp;&nbsp;<b>Sırası Yaklaşanlar:</b> ");
+        for (int i = 0; i < Math.min(3, kuyruk.size()); i++) {
+            ilkUc.append(kuyruk.get(i).ad).append(i < Math.min(3, kuyruk.size()) - 1 ? ", " : "");
+        }
+        if (kuyruk.isEmpty()) ilkUc.append("-");
+        ilkUc.append("</html>");
+        ilkUcLabel.setText(ilkUc.toString());
+
+        // Liste Güncelleme
+        StringBuilder sb = new StringBuilder("\n  --- GÜNCEL BEKLEME LİSTESİ ---\n\n");
+        for (Musteri m : kuyruk) {
+            sb.append("  [No: ").append(m.numara).append("] - ").append(m.ad).append("\n");
+        }
+        listeAlani.setText(sb.toString());
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new BankaArayuz().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new BankaArayuz().setVisible(true));
     }
 }

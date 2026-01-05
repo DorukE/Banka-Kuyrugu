@@ -1,6 +1,11 @@
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Doruk Evcimik - 240053028
+ * Bilgisayar Programcılığı - Veri Yapıları Final Projesi
+ * Banka Kuyruk Yönetim Mantığı (FIFO)
+ */
 public class BankaKuyrugu {
     // Java'nın hazır Queue (Kuyruk) yapısını kullanıyoruz
     // Bu yapı doğal olarak FIFO (İlk giren ilk çıkar) çalışır.
@@ -25,7 +30,12 @@ public class BankaKuyrugu {
         return kuyruk.poll(); // En baştakini alır ve listeden siler
     }
 
-    // Bekleyenlerin listesini verir
+    // Arayüzün (GUI) kuyruktaki herkesi görebilmesi için gereken metot
+    public Queue<Musteri> getTumKuyruk() {
+        return this.kuyruk;
+    }
+
+    // Konsol (Terminal) çıktısı için bekleyenlerin listesini verir
     public void sirayiGoster() {
         System.out.println("--- Güncel Sıra ---");
         for (Musteri m : kuyruk) {
