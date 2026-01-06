@@ -1,7 +1,3 @@
-Kanka, kopyalayıp yapıştırırken kayma olmasının sebebi kullandığın metin editörünün (Notepad, Word vb.) Markdown formatındaki başlıkları ve tabloları düz metin olarak algılamasıdır. Senin için en temiz, hiç kaymayacak ve kopyaladığında profesyonel duracak halini hazırladım.
-
-Bunu bir metin belgesine (.txt veya .md) yapıştırdığında jilet gibi duracaktır.
-
 🏦 ALANYA BANK - PROFESYONEL SIRAMATİK SİSTEMİ
 🚀 PROJE ÖZETİ
 Bu proje, Veri Yapıları dersi kapsamında geliştirilmiş, FIFO (First-In-First-Out) mantığıyla çalışan profesyonel bir banka sıra takip sistemidir. Java Queue arayüzü ve LinkedList altyapısı kullanılarak operasyonel verimlilik hedeflenmiştir.
